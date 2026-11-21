@@ -1,1 +1,187 @@
 
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<title>PAYORA</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+ background:#090d1c;color:white;
+ font-family:Arial,sans-serif;
+ padding:22px 17px 100px;
+}
+header{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:27px;font-weight:900;color:#a78bfa}
+.profile{background:#202743;padding:11px 15px;border-radius:15px}
+.welcome{margin-top:32px;color:#aab1c8}
+h1{font-size:26px;margin-top:8px}
+.balance{
+ margin-top:25px;padding:25px;border-radius:23px;
+ background:linear-gradient(135deg,#6541d9,#30216f);
+}
+.balance p{color:#ded4ff;font-size:14px}
+.amount{font-size:34px;font-weight:bold;margin:13px 0}
+.small{font-size:13px;color:#ded4ff}
+.stats{display:flex;gap:12px;margin-top:17px}
+.stat{
+ flex:1;background:#151d34;border-radius:17px;
+ padding:17px 12px;
+}
+.stat p{font-size:12px;color:#aab1c8}
+.stat b{display:block;margin-top:9px;font-size:19px}
+.section{margin-top:30px}
+.section h2{font-size:20px;margin-bottom:15px}
+.task{
+ background:#151d34;padding:17px;border-radius:17px;
+ margin-bottom:12px;display:flex;align-items:center;
+ justify-content:space-between;gap:10px;
+}
+.task p{font-size:14px;color:#aab1c8;margin-top:7px}
+.task button,.action{
+ background:#7654ed;color:white;border:0;
+ padding:11px 15px;border-radius:11px;font-weight:bold;
+}
+nav{
+ position:fixed;bottom:0;left:0;width:100%;
+ background:#11182b;display:flex;justify-content:space-around;
+ padding:14px 5px calc(14px + env(safe-area-inset-bottom));
+ border-top:1px solid #28314b;
+}
+nav button{
+ background:none;border:0;color:#aab1c8;
+ font-size:12px;display:flex;flex-direction:column;
+ align-items:center;gap:5px;
+}
+nav button.active{color:#a78bfa}
+.page{display:none}
+.page.active{display:block}
+.info{
+ background:#151d34;padding:20px;border-radius:17px;
+ color:#b7c0d8;line-height:1.6;
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">PAYORA.</div>
+ <div class="profile">👤 User</div>
+</header>
+
+<div class="welcome">Xush kelibsiz!</div>
+<h1>PAYORA platformasi 🚀</h1>
+
+<div class="page active" id="home">
+ <div class="balance">
+  <p>💎 Sizning ballaringiz</p>
+  <div class="amount" id="balance">0 XP</div>
+  <div class="small">Vazifalarni bajaring va ball to‘plang</div>
+ </div>
+
+ <div class="stats">
+  <div class="stat">
+   <p>🎬 Vazifalar</p><b id="done">0</b>
+  </div>
+  <div class="stat">
+   <p>🏆 Daraja</p><b>1</b>
+  </div>
+ </div>
+
+ <div class="section">
+  <h2>🔥 Bugungi imkoniyatlar</h2>
+  <div class="task">
+   <div><b>🎬 Video vazifalar</b><p>Vazifalarni ko‘rib chiqing</p></div>
+   <button onclick="showPage('tasks')">Ochish</button>
+  </div>
+  <div class="task">
+   <div><b>🎁 Bonuslar</b><p>Yangi bonuslarni kuzating</p></div>
+   <button onclick="bonus()">Bonus</button>
+  </div>
+ </div>
+</div>
+
+<div class="page" id="tasks">
+ <div class="section">
+  <h2>🎬 Video vazifalar</h2>
+  <div class="info">Hozircha namuna vazifalar. Haqiqiy vazifalar admin tomonidan qo‘shiladi.</div>
+  <div class="task" style="margin-top:15px">
+   <div><b>📺 Video vazifa №1</b><p>Namuna — 10 XP</p></div>
+   <button onclick="completeTask(this)">Bajarildi</button>
+  </div>
+  <div class="task">
+   <div><b>📺 Video vazifa №2</b><p>Namuna — 15 XP</p></div>
+   <button onclick="completeTask(this)">Bajarildi</button>
+  </div>
+ </div>
+</div>
+
+<div class="page" id="friends">
+ <div class="section">
+  <h2>👥 Do‘stlarni taklif qiling</h2>
+  <div class="info">
+   PAYORA'ni do‘stlaringiz bilan ulashing.
+   Taklif tizimi keyingi bosqichda ulanadi.
+  </div>
+ </div>
+</div>
+
+<div class="page" id="wallet">
+ <div class="section">
+  <h2>💰 Hamyon</h2>
+  <div class="balance">
+   <p>Jami to‘plangan ball</p>
+   <div class="amount" id="walletBalance">0 XP</div>
+  </div>
+  <div class="info" style="margin-top:15px">
+   Bu hozircha demo hisob. Haqiqiy pul yechish va to‘lovlar
+   server hamda admin tasdig‘i bilan alohida ulanadi.
+  </div>
+ </div>
+</div>
+
+<nav>
+ <button class="active" onclick="showPage('home',this)">🏠<span>Asosiy</span></button>
+ <button onclick="showPage('tasks',this)">🎬<span>Vazifalar</span></button>
+ <button onclick="showPage('friends',this)">👥<span>Do‘stlar</span></button>
+ <button onclick="showPage('wallet',this)">💰<span>Hamyon</span></button>
+</nav>
+
+<script>
+const tg=window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+
+let points=0;
+let completed=0;
+
+function showPage(id,btn){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ if(btn)btn.classList.add('active');
+}
+
+function completeTask(btn){
+ if(btn.dataset.done)return;
+ btn.dataset.done="1";
+ btn.textContent="Tayyor ✓";
+ btn.disabled=true;
+ btn.style.opacity=".5";
+ points+=10;
+ completed++;
+ document.getElementById('balance').textContent=points+" XP";
+ document.getElementById('walletBalance').textContent=points+" XP";
+ document.getElementById('done').textContent=completed;
+ tg.HapticFeedback?.notificationOccurred('success');
+}
+
+function bonus(){
+ tg.showAlert('Bonuslar tez orada qo‘shiladi!');
+}
+</script>
+</body>
+  </html>
+
